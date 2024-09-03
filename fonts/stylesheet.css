@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Playwrite CU';
+    src: url('PlaywriteCU-Regular.woff2') format('woff2'),
+        url('PlaywriteCU-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

@@ -7,11 +7,11 @@ const createBoard = (player1, player2,size=3)=>{
     this.player1 = new Player(player1, "X");
     this.player2 = new Player(player2, "O");
     console.log(boardArray.length)
-    play(player1, player2, size*size);
+    play(this.player1, this.player2);
 }
 
 
-const play = (player1, player2, size)=>{
+const play = (player1, player2)=>{
  
    for(let i=0; i<boardArray.length;)
     {   
@@ -24,26 +24,49 @@ const play = (player1, player2, size)=>{
 
         if(choice<boardArray.length && choice!="" && boardArray[choice]==null){
             boardArray[choice]=character;
-            //if(i>=4)
-               /* if(checkGameWin(character, choice)){
-                    declareWinnir();
-                    break;
-                }*/
-            i++;
-        }
 
-        console.log(boardArray);
-        console.log(boardArray.length);
-        console.log(i);
+            if(i>=4){
+               if(checkGameWin(character, choice)){
+                    declareWinner(character);
+                    break;
+                }
+            }
+            i++;
+            
+         console.log(character.character);
+        }
+        
     }
 }
 
 const checkGameWin = (player, choice) =>{
-    let rowSize= Math.sqrt(boardArray.length);
+    let size= Math.sqrt(boardArray.length);
+    let beginning = choice-(2*size)-2;
+    let middle = choice-size-1;
+    let end = choice+size+1;
     let won = false;
-    
+   
+    for(let i=0; i<9; i++){
+        if(i==4)
+            i++;
 
+        //checks cross with choice in the middle
+        
+        if(boardArray[beginning +((i%3)*2) +(2*size*Math.floor(i/3))]== boardArray[choice] && 
+            boardArray[middle +(i%3) +(size*Math.floor(i/3))]== boardArray[choice])
+            won=true;
+        //checks diagonal todo with choice as the beginning or end
+        if(boardArray[middle +(i%3) +(size*Math.floor(i/3))]== boardArray[choice] && 
+            boardArray[end -(i%3) -(size*Math.floor(i/3))]== boardArray[choice])
+            won=true;
+    }
     return won;
+}
+
+const declareWinner = (character)=>{
+    console.log(character.name + "Won");
+    character.addScore();
+    console.log(character.score);
 }
 
 return {createBoard};
@@ -57,17 +80,16 @@ return {createBoard};
 function Player(name, operator){
     this.name=name;
     this.operator=operator;
-    let score =0;
+    this.score=0;
 }
 
-Player.prototype.addScore = ()=>{
-    score++;
+Player.prototype.addScore = function(){
+    this.score++;
 }
 
-Player.prototype.resetGame = (name)=>{
+Player.prototype.resetGame = function(name){
     this.name=name;
-    score = 0;
+    this.score = 0;
 }
     
-
-
+ 
