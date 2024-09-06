@@ -9,7 +9,6 @@
 
 *{
     font-family: Playwrite CU;
-    font-size: x-large;
     text-shadow: #FC0 1px 0 10px;
     background-color: rgb(180, 180, 180);
 }
@@ -18,15 +17,41 @@
     justify-content: center;
 }
 .game{
-    display: flex; 
-    justify-content: center;
-    align-items: center;
+    display: grid; 
+    grid-template-columns: 1fr 3fr 1fr;
+    justify-items: center;
+    align-items: end;
+}
+.controls{
+    width: 90%; 
+    height:70%;  
+    font-size: clamp(8px, 0.75em, 16px);
+    display: flex;
+    flex-direction: column;
+    justify-content:flex-start;
+}
+.controls>input, .controls>button{
+    width: 70%; 
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    
+}
+.score{
+    width: 90%;
+    height:70%; 
+    overflow: hidden;
+    font-size: clamp(8px, 1em, 24px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /*background-image: url("./assets/o.svg");*/
 }
 .board{
     padding-top: clamp(50px, 20vh,  150px);
     width: 40vw;
     height: 40vw;
-    display: grid;
+    display: grid; 
 }
 .board div{ 
     border-style:groove; 

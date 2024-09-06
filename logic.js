@@ -2,10 +2,12 @@
 const board = function(){
 let boardArray;
 
-const createBoard = (player1, player2,size=3)=>{
+const createBoard = (player1, player2,size=3,newGame=true)=>{
     boardArray= Array(size*size);
-    this.player1 = new Player(player1, "X");
-    this.player2 = new Player(player2, "O");
+    if(newGame){
+        this.player1 = new Player(player1, "X");
+        this.player2 = new Player(player2, "O");
+    }
     console.log(boardArray.length)
     play(this.player1, this.player2);
 }
@@ -64,12 +66,24 @@ const checkGameWin = (player, choice) =>{
 }
 
 const declareWinner = (character)=>{
-    console.log(character.name + "Won");
+    console.log(character.name + " Won");
     character.addScore();
     console.log(character.score);
 }
 
-return {createBoard};
+const resetData = (parent, size)=>{
+    
+    parent.innerHTML="";
+    let dimension;
+    if(size>0)
+        dimension=size;
+    else   
+        dimension=3;
+    setup(dimension);
+    createBoard(this.player1, this.player2, dimension, false);
+}
+
+return {createBoard, resetData};
 }();
  
 //objects
@@ -87,9 +101,51 @@ Player.prototype.addScore = function(){
     this.score++;
 }
 
-Player.prototype.resetGame = function(name){
-    this.name=name;
-    this.score = 0;
-}
+
+
+const drawBoard = document.querySelector(".board");
+function setup(size=3){
+    let widthTotal = window.innerWidth-(size*2);
+    for(let i=0; i<size*size; i++)
+    {
+        const newChild = document.createElement("div");
+        newChild.className=""+i;
+        drawBoard.appendChild(newChild);
+        drawBoard.style.cssText = "grid-template-columns: repeat("+ 
+        size+ ",1fr);";
+        newChild.addEventListener("click", (e)=>{
+            e.target.style.cssText="background-color:red;";
+            //console.log(e.target.classList.value);
+        });
+    }
     
+    
+} 
+const submit = document.querySelector(".submit").addEventListener("click", getPlayerInfo);
+const remtach = document.querySelector(".reset").addEventListener("click", ()=>
+    {board.resetData(drawBoard, document.getElementById("grid-size").value)});
+
+function getPlayerInfo(){
+    const p1=document.getElementById("p1");
+    const p2=document.getElementById("p2");
+    const size=document.getElementById("grid-size");
+    if(p1.value=="")
+        p1.value="Player 1";
+    if(p2.value=="")
+        p2.value="Player 2";
+    const displayP1 = document.querySelector(".player1");
+    displayP1.textContent=""+p1.value+"=0";
+    const displayP2 = document.querySelector(".player2");
+    displayP2.textContent=""+p2.value+"=0";
+    drawBoard.innerHTML="";
+    let dimension;
+    if(size.value>0)
+        dimension=size.value;
+    else   
+        dimension=3;
+    setup(dimension);
+    board.createBoard(p1.value, p2.value, dimension);    
+}  
+
+
  
