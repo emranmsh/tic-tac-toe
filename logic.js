@@ -9,6 +9,7 @@ const createBoard = (player1, player2,size=3,newGame=true)=>{
         this.player2 = new Player(player2, "O");
     }
     console.log(boardArray.length)
+    updateScore(this.player1, this.player2)
     play(this.player1, this.player2);
 }
 
@@ -17,7 +18,7 @@ const play = (player1, player2)=>{
  
    for(let i=0; i<boardArray.length;)
     {   
-        let choice = prompt();
+        let choice = prompt();//binder();
         let character;
         if(i%2 == 0)
             character=player1;
@@ -79,8 +80,7 @@ const resetData = (parent, size)=>{
         dimension=size;
     else   
         dimension=3;
-    setup(dimension);
-    createBoard(this.player1, this.player2, dimension, false);
+    setup(this.player1.name, this.player2.name, dimension, false);
 }
 
 return {createBoard, resetData};
@@ -89,8 +89,7 @@ return {createBoard, resetData};
 //objects
 
 
-//player constructor, function increases score and resetgame resets the score 
-//and renames the same object because don't want to create new objects
+//player constructor, function increases score 
 function Player(name, operator){
     this.name=name;
     this.operator=operator;
@@ -104,7 +103,7 @@ Player.prototype.addScore = function(){
 
 
 const drawBoard = document.querySelector(".board");
-function setup(size=3){
+function setup(p1, p2, size=3, newGame=true){
     let widthTotal = window.innerWidth-(size*2);
     for(let i=0; i<size*size; i++)
     {
@@ -113,16 +112,17 @@ function setup(size=3){
         drawBoard.appendChild(newChild);
         drawBoard.style.cssText = "grid-template-columns: repeat("+ 
         size+ ",1fr);";
-        newChild.addEventListener("click", (e)=>{
-            e.target.style.cssText="background-color:red;";
-            //console.log(e.target.classList.value);
-        });
+        newChild.addEventListener("click", binder);
+
     }
+    
+    updateScore([p1, 0], [p2,0]);
+    board.createBoard(p1, p2, size, newGame); 
     
     
 } 
 const submit = document.querySelector(".submit").addEventListener("click", getPlayerInfo);
-const remtach = document.querySelector(".reset").addEventListener("click", ()=>
+const rematch = document.querySelector(".reset").addEventListener("click", ()=>
     {board.resetData(drawBoard, document.getElementById("grid-size").value)});
 
 function getPlayerInfo(){
@@ -133,19 +133,28 @@ function getPlayerInfo(){
         p1.value="Player 1";
     if(p2.value=="")
         p2.value="Player 2";
-    const displayP1 = document.querySelector(".player1");
-    displayP1.textContent=""+p1.value+"=0";
-    const displayP2 = document.querySelector(".player2");
-    displayP2.textContent=""+p2.value+"=0";
-    drawBoard.innerHTML="";
+    
     let dimension;
     if(size.value>0)
         dimension=size.value;
     else   
         dimension=3;
-    setup(dimension);
-    board.createBoard(p1.value, p2.value, dimension);    
+    drawBoard.innerHTML="";
+    setup(p1.value, p2.value, dimension);
+       
 }  
+const displayP1 = document.querySelector(".player1");
+const displayP2 = document.querySelector(".player2");
+function updateScore(p1, p2){
+    
+    displayP1.textContent=""+p1.name+": "+p1.score;
+    displayP2.textContent=""+p2.name+": "+p2.score;
+}
 
-
+function binder(e){
+   
+        e.target.style.cssText="background-color:red;";
+        return console.log(e.target.classList.value);
+    
+}
  
