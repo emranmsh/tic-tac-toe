@@ -1,7 +1,8 @@
 //Modules
 const board = function(){
 let boardArray;
-
+let count=0;
+let won=false;
 const createBoard = (player1, player2,size=3,newGame=true)=>{
     boardArray= Array(size*size);
     if(newGame){
@@ -10,36 +11,39 @@ const createBoard = (player1, player2,size=3,newGame=true)=>{
     }
     console.log(boardArray.length)
     updateScore(this.player1, this.player2)
-    play(this.player1, this.player2);
+    won=false;
+    count=0;
+     
 }
 
 
-const play = (player1, player2)=>{
+const play = (index)=>{
  
-   for(let i=0; i<boardArray.length;)
-    {   
-        let choice = prompt();//binder();
+    
+    if(!won){    
         let character;
-        if(i%2 == 0)
-            character=player1;
+        if(count%2 == 0)
+            character=this.player1;
         else 
-            character=player2;
+            character=this.player2;
 
-        if(choice<boardArray.length && choice!="" && boardArray[choice]==null){
-            boardArray[choice]=character;
+        if(boardArray[index]==null){
+            boardArray[index]=character;
 
-            if(i>=4){
-               if(checkGameWin(character, choice)){
+            if(count>=4){
+               if(checkGameWin(character, index)){
                     declareWinner(character);
-                    break;
+                    character.addScore();
+                    declareWinner(character.name);
+                    won=true;
                 }
             }
-            i++;
+            count++;
             
-         console.log(character.character);
+         displayChoice(character.image, index);
         }
-        
     }
+    
 }
 
 const checkGameWin = (player, choice) =>{
@@ -66,11 +70,6 @@ const checkGameWin = (player, choice) =>{
     return won;
 }
 
-const declareWinner = (character)=>{
-    console.log(character.name + " Won");
-    character.addScore();
-    console.log(character.score);
-}
 
 const resetData = (parent, size)=>{
     
@@ -80,10 +79,12 @@ const resetData = (parent, size)=>{
         dimension=size;
     else   
         dimension=3;
+    count=0;
+    won=false;
     setup(this.player1.name, this.player2.name, dimension, false);
 }
 
-return {createBoard, resetData};
+return {createBoard, play, resetData};
 }();
  
 //objects
@@ -94,6 +95,10 @@ function Player(name, operator){
     this.name=name;
     this.operator=operator;
     this.score=0;
+    if(operator=="X")
+        this.image="./assets/x.svg";
+    else
+    this.image="./assets/o.svg";
 }
 
 Player.prototype.addScore = function(){
@@ -112,7 +117,7 @@ function setup(p1, p2, size=3, newGame=true){
         drawBoard.appendChild(newChild);
         drawBoard.style.cssText = "grid-template-columns: repeat("+ 
         size+ ",1fr);";
-        newChild.addEventListener("click", binder);
+        newChild.addEventListener("click", (e)=>{board.play(e.target.classList.value);});
 
     }
     
@@ -151,10 +156,17 @@ function updateScore(p1, p2){
     displayP2.textContent=""+p2.name+": "+p2.score;
 }
 
-function binder(e){
-   
-        e.target.style.cssText="background-color:red;";
-        return console.log(e.target.classList.value);
+function displayChoice(image, index){
+    let choices= document.querySelectorAll(".board div");
+   choices[index].style.cssText="background-image: url("+image+");"
+   +"background-size:"+(choices[index].offsetWidth*0.7)+"px;"+ "background-position: center;"  +"background-repeat: no-repeat";
+  
+}
+
+function declareWinner(character){
+    const disp = document.querySelector(".winner");
+    disp.textContent=character+" Won!"
     
 }
+ 
  
